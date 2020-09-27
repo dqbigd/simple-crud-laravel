@@ -3,6 +3,12 @@
 <div class="row">
     <div class="col-sm text-center">
         <form method="POST" action="{{route("crud.update", [$student->id])}}">
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    {{$errors->first()}}
+                </div>
+            @endif
+            
             @csrf
             {{method_field("PUT")}}
             <div class="form-group">

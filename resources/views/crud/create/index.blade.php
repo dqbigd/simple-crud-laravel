@@ -3,6 +3,12 @@
 <div class="row">
     <div class="col-sm text-center">
         <form method="POST" action="{{route("crud.store")}}">
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    {{$errors->first()}}
+                </div>
+            @endif
+
             @csrf
             <div class="form-group">
               <label for="nama">Nama</label>

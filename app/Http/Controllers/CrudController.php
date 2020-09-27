@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Support\Facades\Validator;
 
 class CrudController extends Controller
 {
@@ -16,7 +17,7 @@ class CrudController extends Controller
     {
         $student = Student::all();
         // echo $student;
-        return view("crud.index", ['student'=> $student]);
+        return view("crud.index", ['student' => $student]);
     }
 
     /**
@@ -37,12 +38,21 @@ class CrudController extends Controller
      */
     public function store(Request $request)
     {
-        $student = new Student();
-        $student->nama = $request->get("nama");
-        $student->nim = $request->get("nim");
-        $student->save();
+        $validator = Validator::make(request()->all(), [
+            'nama' => 'required',
+            'nim' => 'required'
+        ]);
 
-        return redirect()->route("crud.index");
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors());
+        } else {
+            $student = new Student();
+            $student->nama = $request->get("nama");
+            $student->nim = $request->get("nim");
+            $student->save();
+
+            return redirect()->route("crud.index");
+        }
     }
 
     /**
@@ -66,7 +76,7 @@ class CrudController extends Controller
     {
         $student = Student::find($id);
 
-        return view("crud.edit.index", ['student'=> $student]);
+        return view("crud.edit.index", ['student' => $student]);
     }
 
     /**
@@ -78,10 +88,22 @@ class CrudController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $student = Student::find($id);
-        $student->nama = $request->get("nama");
-        $student->nim = $request->get("nim");
-        $student->save();
+        $validator = Validator::make(request()->all(), [
+            'nama' => 'required',
+            'nim' => 'required|digits:11|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors());
+        } else {
+            $student = Student::find($id);
+            $student->nama = $request->get("nama");
+            $student->nim = $request->get("nim");
+            $student->save();
+
+            return redirect()->route("crud.index");
+        }
+
 
         return redirect()->route("crud.index");
     }
@@ -96,7 +118,11 @@ class CrudController extends Controller
     {
         $student = Student::find($id);
         $student->delete();
-        
-        return redirect()->route("crud.index");
+
+        // if($student->delete()){
+        //     echo
+        // }
+
+        // return redirect()->route("crud.index");
     }
 }
